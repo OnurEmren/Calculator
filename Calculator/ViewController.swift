@@ -43,12 +43,9 @@ class ViewController: UIViewController {
     
     func getNumberButtons(){
         
-        let labelFrame = CGRect(x: 30, y: 80, width: 330, height: 150)
+        let labelFrame = CGRect(x: 30, y: 150, width: 330, height: 150)
         label = MyLabel(frame: labelFrame, text: "0", labelColor: .black, fontSize: 40.0)
         view.addSubview(label)
-        
-        let buttonSize: CGFloat = 80.0
-        let buttonSpacing: CGFloat = 10.0
         
         for i in 0...9 {
             let buttonWidth: CGFloat
@@ -70,11 +67,11 @@ class ViewController: UIViewController {
             numberButton.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
 
             if i == 0 {
-                numberButton.frame = CGRect(x: 30, y: 690, width: 170, height: 80)
+                numberButton.frame = CGRect(x: 35, y: 690, width: 170, height: 80)
                 numberButton.layer.cornerRadius = 30
                 
             } else {
-                numberButton.frame = CGRect(x: 30 + ((i - 1) % 3) * 90, y: 600 - ((i - 1) / 3) * 90, width: Int(buttonWidth), height: Int(buttonHeight))
+                numberButton.frame = CGRect(x: 35 + ((i - 1) % 3) * 90, y: 600 - ((i - 1) / 3) * 90, width: Int(buttonWidth), height: Int(buttonHeight))
                 numberButton.layer.cornerRadius = numberButton.frame.width/2
                 
             }
@@ -125,7 +122,7 @@ class ViewController: UIViewController {
         
         
         //Point Button
-        pointButton = MyButton(frame: CGRect(x: 210, y: 690, width: 80, height: 80))
+        pointButton = MyButton(frame: CGRect(x: 215, y: 690, width: 80, height: 80))
         pointButton.setTitle(".", for: .normal)
         pointButton.backgroundColor = .systemGray
         pointButton.addTarget(self, action: #selector(dotButtonTapped), for: .touchUpInside)
@@ -166,15 +163,13 @@ class ViewController: UIViewController {
         firstStackView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(firstStackView)
         
-        let horizontalCenterXConstraint = firstStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-        let horizontalCenterYConstraint = firstStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 100)
+        let horizontalCenterXConstraint = firstStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor,constant: 10)
         horizontalCenterXConstraint.isActive = true
-        horizontalCenterYConstraint.isActive = true
 
         
         let horizontalBottomConstraint: NSLayoutConstraint = {
             let buttonHeight: CGFloat = buttonSize
-            let centerYOffset = (view.bounds.height - buttonHeight) * 1/8
+            let centerYOffset = (view.bounds.height - buttonHeight) * 1/13
             let constraint = firstStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -centerYOffset)
             return constraint
         }()
