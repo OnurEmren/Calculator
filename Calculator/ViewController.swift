@@ -198,22 +198,22 @@ class ViewController: UIViewController {
                 
                 switch operation {
                 case .add:
-                    let result = firstNumber + secondNumber
+                    let result = calculateViewModel.add(firstNumber, secondNumber)
                     resultLabel.text = "\(result)"
                     break
                     
                 case .subtract:
-                    let result = firstNumber - secondNumber
+                    let result = calculateViewModel.minus(firstNumber, secondNumber)
                     resultLabel.text = "\(result)"
                     break
                     
                 case .multiply:
-                    let result = firstNumber * secondNumber
+                    let result = calculateViewModel.multiply(firstNumber, secondNumber)
                     resultLabel.text = "\(result)"
                     break
                     
                 case .divide:
-                    let result = firstNumber / secondNumber
+                    let result = calculateViewModel.divide(firstNumber, secondNumber)
                     resultLabel.text = "\(result)"
                     break
                     
