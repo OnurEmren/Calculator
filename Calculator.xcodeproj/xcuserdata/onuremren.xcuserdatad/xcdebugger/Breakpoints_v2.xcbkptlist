@@ -14,8 +14,8 @@
             filePath = "Calculator/ViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "87"
-            endingLineNumber = "87"
+            startingLineNumber = "179"
+            endingLineNumber = "179"
             landmarkName = "ViewController"
             landmarkType = "3">
          </BreakpointContent>
@@ -30,10 +30,10 @@
             filePath = "Calculator/ViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "332"
-            endingLineNumber = "332"
-            landmarkName = "animateLabel()"
-            landmarkType = "7">
+            startingLineNumber = "295"
+            endingLineNumber = "295"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -10,326 +10,290 @@ import UIKit
 class ViewController: UIViewController {
     
     let calculateViewModel = CalculateViewModel()
-    var pointButton = MyButton()
-    var buttonsStackView: UIStackView!
-    var trailingConstraint: NSLayoutConstraint!
-    var bottomConstraint: NSLayoutConstraint!
-    
     var total: Double = 0.0
-    var operation : Int? = 0
-    var firstNumber : Double = 0.0
-    var nextNumber : Double = 0.0
+    let buttonSpacing: CGFloat = 10.0
+    var firstNumber = 0
+    var resultNumber = 0
+    var currentOperations: Operation?
     
-    var isMath : Bool = false
-    var isMathResult : Bool = true
-    
-    var currentNumber: String = ""
-    var label: MyLabel!
-    
-    
-    
+    enum Operation {
+        case add, subtract, multiply, divide
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .black
         
-        //getNumberButton()
         getNumberButtons()
-        getOperationsButtons()
+        
     }
     
-    //MARK: - Number Buttons' frames and methods
+    private var resultLabel: UILabel = {
+        let label = UILabel()
+        label.text = "0"
+        label.textColor = .white
+        label.textAlignment = .right
+        label.font = UIFont(name: "Helvetica", size: 100)
+        
+        return label
+    }()
+    
+    //MARK: - Number Buttons
     
     func getNumberButtons(){
         
-        let labelFrame = CGRect(x: 30, y: 150, width: 330, height: 150)
-        label = MyLabel(frame: labelFrame, text: "0", labelColor: .black, fontSize: 40.0)
-        view.addSubview(label)
+        resultLabel.frame = CGRect(x: 20, y: 150, width: view.frame.size.width - 40, height: 100)
+        
+        view.addSubview(resultLabel)
+        
+        
+        let buttonSize: CGFloat = view.frame.size.width / 4.8
         
         for i in 0...9 {
-            let buttonWidth: CGFloat
-            let buttonHeight: CGFloat
-            if i == 0 {
-                buttonWidth = 160
-                buttonHeight = 80
-            } else {
-                buttonWidth = 80
-                buttonHeight = 80
-            }
             
-            let numberButton = UIButton(type: .system)
+            let numberButton = NumberButtons(type: .system)
             numberButton.setTitle("\(i)", for: .normal)
             numberButton.backgroundColor = .systemGray
             numberButton.titleLabel?.font = UIFont.systemFont(ofSize: 24)
             numberButton.setTitleColor(UIColor.white, for: .normal)
             numberButton.tag = i
-            numberButton.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
-
+            numberButton.addTarget(self, action: #selector(numberPressed(_:)), for: .touchUpInside)
+            
             if i == 0 {
-                numberButton.frame = CGRect(x: 35, y: 690, width: 170, height: 80)
-                numberButton.layer.cornerRadius = 30
+                numberButton.frame = CGRect(
+                    x: buttonSize/3,
+                    y: view.frame.size.height-buttonSize-80,
+                    width: buttonSize*3.2,
+                    height: buttonSize)
+                numberButton.layer.cornerRadius = 40
+                numberButton.tag = 1
+                numberButton.addTarget(self, action: #selector(zeroButtonTapped), for: .touchUpInside)
                 
             } else {
-                numberButton.frame = CGRect(x: 35 + ((i - 1) % 3) * 90, y: 600 - ((i - 1) / 3) * 90, width: Int(buttonWidth), height: Int(buttonHeight))
-                numberButton.layer.cornerRadius = numberButton.frame.width/2
+                for x in 0..<3 {
+                    let buttonX = buttonSize * (CGFloat(x) + 0.3) + CGFloat(x) * buttonSpacing
+                    let buttonY = view.frame.size.height - (buttonSize * 3.1)
+                    let button1 = NumberButtons(
+                        frame: CGRect(x: buttonX,
+                                      y: buttonY,
+                                      width: buttonSize,
+                                      height: buttonSize)
+                    )
+                    button1.setTitle("\(x+1)", for: .normal)
+                    button1.tag = x+2
+                    button1.addTarget(self, action: #selector(numberPressed(_:)), for: .touchUpInside)
+                    view.addSubview(button1)
+                }
                 
+                for x in 0..<3 {
+                    let buttonX = buttonSize * (CGFloat(x) + 0.3) + CGFloat(x) * buttonSpacing
+                    let buttonY = view.frame.size.height - (buttonSize * 4.2)
+                    let button2 = NumberButtons(
+                        frame: CGRect(
+                            x:buttonX,
+                            y: buttonY,
+                            width: buttonSize,
+                            height: buttonSize)
+                    )
+                    button2.setTitle("\(x+4)", for: .normal)
+                    button2.tag = x+5
+                    button2.addTarget(self, action: #selector(numberPressed(_:)), for: .touchUpInside)
+                    view.addSubview(button2)
+                }
+                
+                for x in 0..<3 {
+                    let buttonX = buttonSize * (CGFloat(x) + 0.3) + CGFloat(x) * buttonSpacing
+                    let buttonY = view.frame.size.height - (buttonSize * 5.3)
+                    let button3 = NumberButtons(
+                        frame: CGRect(
+                            x: buttonX,
+                            y: buttonY,
+                            width: buttonSize,
+                            height: buttonSize)
+                    )
+                    button3.setTitle("\(x+7)", for: .normal)
+                    button3.tag = x+8
+                    button3.addTarget(self, action: #selector(numberPressed(_:)), for: .touchUpInside)
+                    view.addSubview(button3)
+                }
+                
+                let buttonX = buttonSize/3.5
+                let clearButton = MyButton(
+                    frame: CGRect(
+                        x: buttonX,
+                        y: view.frame.size.height-(buttonSize*6.4),
+                        width: buttonSize,
+                        height: buttonSize)
+                )
+                clearButton.setTitle("CA", for: .normal)
+                clearButton.addTarget(self, action: #selector(clearCalculate), for: .touchUpInside)
+                view.addSubview(clearButton)
+                
+                
+                let operations = ["=","+", "-", "x", "/"]
+                
+                for x in 0..<5 {
+                    let button4 = MyButton(
+                        frame: CGRect(
+                            x: buttonSize * 3.7,
+                            y: view.frame.size.height-(buttonSize * CGFloat(x+2)) - (7.5 * CGFloat(x)) ,
+                            width: buttonSize,
+                            height: buttonSize)
+                    )
+                    button4.setTitle(operations[x], for: .normal)
+                    button4.tag = x+1
+                    button4.addTarget(self, action: #selector(operationPressed(_:)), for: .touchUpInside)
+                    view.addSubview(button4)
+                }
+                
+                let anotherOperations = ["+/-","%"]
+                for x in 0..<2 {
+                    let buttonX = buttonSize * (CGFloat(x) + 1.45) + CGFloat(x) * buttonSpacing
+                    let button5 = MyButton(
+                        frame: CGRect(
+                            x: buttonX,
+                            y: view.frame.size.height - (buttonSize * 6.4),
+                            width: buttonSize,
+                            height: buttonSize)
+                    )
+                    button5.setTitle(anotherOperations[x], for: .normal)
+                    button5.tag = x+1
+                    button5.addTarget(self, action: #selector(operationPressed(_:)), for: .touchUpInside)
+                    view.addSubview(button5)
+                }
+                
+                resultLabel.frame = CGRect(
+                    x: 20,
+                    y: clearButton.frame.origin.y - 110.0,
+                    width: view.frame.size.width - 40,
+                    height: 100
+                )
+                view.addSubview(resultLabel)
             }
             
             view.addSubview(numberButton)
         }
-        
-        
     }
     
     
-    
-    @objc
-    private func buttonTapped(_ sender: UIButton) {
-        
-        guard let buttonText = sender.title(for: .normal) else {
-            return
-        }
-        
-        if isMathResult {
-            label.text = buttonText
-            isMathResult = false
-        } else {
-            if label.text == "0" || isMath {
-                label.text = buttonText
-                isMath = false
-            } else {
-                label.text?.append(buttonText)
-            }
-        }
-        
-        if let labelText = label.text, let number = Double(labelText) {
-            nextNumber = number
-        } else {
-            nextNumber = 0
-        }
-        
-        pointButton.isEnabled = true
-        
-    }
     
     //MARK: - Operations and operations' Buttons.
     
-    private func getOperationsButtons(){
-        
-        horizontalButtonSettings()
-        verticalButtonsSettings()
-        
-        
-        //Point Button
-        pointButton = MyButton(frame: CGRect(x: 215, y: 690, width: 80, height: 80))
-        pointButton.setTitle(".", for: .normal)
-        pointButton.backgroundColor = .systemGray
-        pointButton.addTarget(self, action: #selector(dotButtonTapped), for: .touchUpInside)
-        pointButton.tag = 10
-        view.addSubview(pointButton)
-        
-        
-    }
-    
-    //MARK: - Number Buttons Settings
-
-
-   
-    //MARK: - Horizontal Button Settings
-    
-    private func horizontalButtonSettings(){
-        var operationsButtons: [MyButton] = []
-        
-        let horizontalButtons: [(title: String, tag: Int)] = [
-            ("AC", 11),
-            ("%", 12),
-            ("/", 13),
-            ("+/-", 18)
-            
-            // Diğer butonlar için gerekli değerleri ekleyin
-        ]
-        
-        let buttonWidthRatio: CGFloat = 0.2
-        let screenWidth = UIScreen.main.bounds.width
-        let buttonSize = screenWidth * buttonWidthRatio
-        let buttonSpacing: CGFloat = 10.0
-        let firstStackView = UIStackView()
-        
-        firstStackView.axis = .horizontal
-        firstStackView.alignment = .fill
-        firstStackView.spacing = buttonSpacing
-        firstStackView.distribution = .equalSpacing
-        firstStackView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(firstStackView)
-        
-        let horizontalCenterXConstraint = firstStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor,constant: 10)
-        horizontalCenterXConstraint.isActive = true
-
-        
-        let horizontalBottomConstraint: NSLayoutConstraint = {
-            let buttonHeight: CGFloat = buttonSize
-            let centerYOffset = (view.bounds.height - buttonHeight) * 1/13
-            let constraint = firstStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -centerYOffset)
-            return constraint
-        }()
-        horizontalBottomConstraint.isActive = true
-        
-        for buttonData in horizontalButtons {
-            let button = MyButton()
-            button.setTitle(buttonData.title, for: .normal)
-            button.addTarget(self, action: #selector(operationsButtonTapped), for: .touchUpInside)
-            button.tag = buttonData.tag
-            button.translatesAutoresizingMaskIntoConstraints = false
-            operationsButtons.append(button)
-            firstStackView.addArrangedSubview(button)
-            
-            button.heightAnchor.constraint(equalToConstant: 80).isActive = true
-            button.widthAnchor.constraint(equalTo: button.heightAnchor).isActive = true
-            button.layer.cornerRadius = 40
-        }
-    }
-    
-    //MARK: - Vertical Button Settings
-    
-    private func verticalButtonsSettings(){
-        var operationsButtons: [MyButton] = []
-        let verticalButtons: [(title: String, tag: Int)] = [
-            ("X", 14),
-            ("-", 15),
-            ("+", 16),
-            ("=", 17)
-        ]
-        
-        let buttonWidthRatio: CGFloat = 0.2
-        let screenWidth = UIScreen.main.bounds.width
-        let buttonSize = screenWidth * buttonWidthRatio
-        let buttonSpacing: CGFloat = 10.0
-        let verticalStackView = UIStackView()
-        
-        
-        verticalStackView.axis = .vertical
-        verticalStackView.alignment = .fill
-        verticalStackView.spacing = buttonSpacing
-        verticalStackView.distribution = .equalSpacing
-        verticalStackView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(verticalStackView)
-        
-        
-        let verticalBottomConstraint: NSLayoutConstraint = {
-            let buttonHeight: CGFloat = 80.0
-            let trailingOffset = (view.bounds.width - buttonHeight) * 1/256
-            let bottomOffset = (view.bounds.height - buttonHeight) * 1/24
-            let verticalCenterXConstraint = verticalStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 150)
-            let verticalBottomConstraint = verticalStackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -85)
-            verticalCenterXConstraint.isActive = true
-            verticalBottomConstraint.isActive = true
-
-          
-
-            return verticalBottomConstraint
-        }()
-        verticalBottomConstraint.isActive = true
-        
-        for buttonData in verticalButtons {
-            let button = MyButton()
-            button.setTitle(buttonData.title, for: .normal)
-            button.addTarget(self, action: #selector(operationsButtonTapped), for: .touchUpInside)
-            button.tag = buttonData.tag
-            button.translatesAutoresizingMaskIntoConstraints = false
-            operationsButtons.append(button)
-            verticalStackView.addArrangedSubview(button)
-
-            button.layer.cornerRadius = 40
-            button.heightAnchor.constraint(equalToConstant: buttonSize).isActive = true
-            button.widthAnchor.constraint(equalTo: button.heightAnchor).isActive = true
-
-        }
-    }
-    
     @objc
-    private func dotButtonTapped(_ sender: UIButton){
-        guard let labelText = label.text else {
-            return
+    private func operationPressed(_ sender: UIButton){
+        let tag = sender.tag
+        if let text = resultLabel.text, let value = Int(text), firstNumber == 0 {
+            firstNumber = value
+            resultLabel.text = "0"
         }
         
-        if labelText.contains(".") || isMath {
-            return
-        }
-        
-        label.text?.append(".")
-    }
-    
-    
-    
-    @objc
-    private func operationsButtonTapped(_ sender: UIButton){
-        
-        if label.text != "" && sender.tag != 11 && sender.tag != 17{
-            firstNumber = Double(label.text!)!
-            if sender.tag == 12 {
-                label.text = String(firstNumber) + "%"
-            } else if sender.tag == 13 {
-                label.text = String(firstNumber) + "/"
-            } else if sender.tag == 14 {
-                label.text = String(firstNumber) + "x"
-            } else if sender.tag == 15 {
-                label.text = String(firstNumber) + "-"
-            } else if sender.tag == 16 {
-                label.text = String(firstNumber) + "+"
-            }
-            operation = sender.tag
-            isMath = true
-            
-        } else if sender.tag == 11 {
-            clearCalculate()
-            
-        } else if sender.tag == 17 {
-            
-            // Clear before new operation start
-            if let currentNumber = Double(label.text ?? "") {
-                total = currentNumber
-            }
-            isMathResult = true
-            
-            if operation == 12 {
-                label.text = String(firstNumber/100)
+        //Equals Button
+        if tag == 1 {
+            if let operation = currentOperations {
+                var secondNumber = 0
+                if let text = resultLabel.text, let value = Int(text) {
+                    secondNumber = value
+                }
                 
-            } else if operation == 13 {
-                label.text = String(calculateViewModel.divide(firstNumber, nextNumber))
+                switch operation {
+                case .add:
+                    let result = firstNumber + secondNumber
+                    resultLabel.text = "\(result)"
+                    break
+                    
+                case .subtract:
+                    let result = firstNumber - secondNumber
+                    resultLabel.text = "\(result)"
+                    break
+                    
+                case .multiply:
+                    let result = firstNumber * secondNumber
+                    resultLabel.text = "\(result)"
+                    break
+                    
+                case .divide:
+                    let result = firstNumber / secondNumber
+                    resultLabel.text = "\(result)"
+                    break
+                    
+                }
                 animateLabel()
-            } else if operation == 14 {
-                label.text = String(calculateViewModel.multiply(firstNumber, nextNumber))
-                animateLabel()
-            } else if operation == 15 {
-                label.text = String(calculateViewModel.minus(firstNumber,nextNumber))
-                animateLabel()
-            } else if operation == 16 {
-                label.text = String(calculateViewModel.add(firstNumber, nextNumber))
-                animateLabel()
-            } else if operation == 18 {
-                label.text = String("")
+            }
+        }
+        
+        else if tag == 2 {
+            currentOperations = .add
+        }
+        else if tag == 3 {
+            currentOperations = .subtract
+        }
+        else if tag == 4 {
+            currentOperations = .multiply
+        }
+        else if tag == 5 {
+            currentOperations = .divide
+        }
+        
+        
+    }
+    
+    //MARK: - Buttons Tapped Functions
+    
+    @objc
+    private func clearCalculate(){
+        resultLabel.text = "0"
+        firstNumber = 0
+        currentOperations = nil
+        
+    }
+    
+    @objc
+    private func zeroButtonTapped(){
+        if resultLabel.text != "0"{
+            if let text = resultLabel.text{
+                resultLabel.text = "\(text)"
             }
         }
     }
     
-    private func clearCalculate(){
-        firstNumber = 0
-        nextNumber = 0
-        operation = 0
-        label.text = "0"
+    @objc
+    private func numberPressed(_ sender: UIButton) {
+        
+        let tag = sender.tag - 1
+        
+        if resultLabel.text == "0" {
+            resultLabel.text = "\(tag)"
+        }
+        else if let text = resultLabel.text {
+            resultLabel.text = "\(text)\(tag)"
+        }
+        
     }
+    
+    //MARK: - Animate
     
     private func animateLabel() {
         UIView.animate(withDuration: 0.3, animations: {
-            self.label.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+            self.resultLabel.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
         }) { (completed) in
             UIView.animate(withDuration: 0.3) {
-                self.label.transform = CGAffineTransform.identity
+                self.resultLabel.transform = CGAffineTransform.identity
             }
         }
     }
+    
+    
 }
+
+
+
+
+
+
+
+
+
 
 
 

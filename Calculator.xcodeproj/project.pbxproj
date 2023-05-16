@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		46437A6F2A138C2D002DEC58 /* NumberButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46437A6E2A138C2D002DEC58 /* NumberButtons.swift */; };
 		46BE9AA52A0AC63D00F23CE1 /* MyButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BE9AA42A0AC63D00F23CE1 /* MyButton.swift */; };
 		46BE9AA72A0AD06200F23CE1 /* MyLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BE9AA62A0AD06200F23CE1 /* MyLabel.swift */; };
 		46BE9AA92A0AD4A900F23CE1 /* CalculateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BE9AA82A0AD4A900F23CE1 /* CalculateViewModel.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		46437A6E2A138C2D002DEC58 /* NumberButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberButtons.swift; sourceTree = "<group>"; };
 		46BE9AA42A0AC63D00F23CE1 /* MyButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyButton.swift; sourceTree = "<group>"; };
 		46BE9AA62A0AD06200F23CE1 /* MyLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyLabel.swift; sourceTree = "<group>"; };
 		46BE9AA82A0AD4A900F23CE1 /* CalculateViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculateViewModel.swift; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 				46CBD5982A098E6D00A3A13B /* LaunchScreen.storyboard */,
 				46CBD59B2A098E6D00A3A13B /* Info.plist */,
 				46BE9AA42A0AC63D00F23CE1 /* MyButton.swift */,
+				46437A6E2A138C2D002DEC58 /* NumberButtons.swift */,
 				46BE9AA62A0AD06200F23CE1 /* MyLabel.swift */,
 				46BE9AA82A0AD4A900F23CE1 /* CalculateViewModel.swift */,
 				46BE9AAC2A0ADAD600F23CE1 /* MyNumberButton.swift */,
@@ -152,6 +155,7 @@
 				46BE9AA72A0AD06200F23CE1 /* MyLabel.swift in Sources */,
 				46CBD58E2A098E6C00A3A13B /* AppDelegate.swift in Sources */,
 				46BE9AA52A0AC63D00F23CE1 /* MyButton.swift in Sources */,
+				46437A6F2A138C2D002DEC58 /* NumberButtons.swift in Sources */,
 				46CBD5902A098E6C00A3A13B /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
